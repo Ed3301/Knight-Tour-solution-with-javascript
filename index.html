@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		table{
+			border-collapse: collapse;
+			height: 90vh;
+			width: 90vh;
+		}
+		td{
+			border: 3px solid black;
+			text-align: center;
+			color: white;
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			height: 10vh;
+			width: 10vh;
+		}
+	</style>
+</head>
+<body>
+	<table id="tab"></table>
+	<script>
+		var tab = document.getElementById('tab'),
+			width = parseInt(prompt('input width')),
+			height = parseInt(prompt('input height')),
+			startX = parseInt(prompt('input start X')),
+			startY = parseInt(prompt('input start Y')),
+			xMove = [-1, -2, -2, -1, 1, 2, 2, 1],
+			yMove = [-2, -1, 1, 2, 2, 1, -1, -2],
+			table = new Array(width),
+			sol = new Array(width),
+			i = 0,j = -1,k = 0, x = startX, y = startY;
+
+
+		for (var i = 0; i < width; i++) {
+			row = tab.insertRow(i);
+			sol[i] = tab.firstChild.childNodes[i];
+			table[i] = new Array(height);
+			for(var j = 0; j < height; j++){
+				cell = row.insertCell(j);
+				sol[i][j] = tab.firstChild.childNodes[i].childNodes[j];
+			}	
+		}
+ 		
+		function solve(moveNum, x, y){
+			if(moveNum == height * width) return true;
+			
+			table[y][x] = moveNum++;
+
+			for(var i = 0;i < 8;i++){
+				var newX = (x + xMove[i]);
+				var newY = (y + yMove[i]);
+
+				if(newY < 0 || newY >= width || newX < 0 || newX >= height) continue;
+				if(table[newY][newX] != undefined) continue;
+				if(solve(moveNum, newX, newY)) return true; 
+			}
+			table[y][x] = undefined;
+			return false;
+		}
+
+		if(!solve(1,startX,startY)){ 
+			alert('There Is No Soloution');
+			location.reload(true);
+		}
+
+		for(var i = 0;i < width;i++){
+			for(var j = 0;j < height;j++){
+				if(table[i][j] == undefined) table[i][j] = width * height;
+					sol[i][j].innerHTML = table[i][j];
+			}
+		}
+
+		var t = setInterval(function(){
+			if(j == width-1){
+				i++;
+				j = 0;
+			}
+			j++;
+			k++;
+			if((i == width-1 && j == height-1) || (k == height * width)) clearInterval(t);
+			sol[x][y].style.backgroundImage = 'url(https://vignette.wikia.nocookie.net/laruedadeltiempo/images/d/dd/Equis.png/revision/latest?cb=20130808205132&path-prefix=es)';
+			for(var h = 0;h < width; h++){
+				for(var l = 0;l < height; l++){
+					if(sol[h][l].innerHTML == k){
+						sol[h][l].innerHTML = '';
+						sol[h][l].style.backgroundImage = 'url(http://icons.iconarchive.com/icons/icons8/windows-8/128/Astrology-Year-Of-Horse-icon.png)';
+						x = h;
+						y = l;
+					}
+				}
+			}
+		},500);
+
+	</script>
+</body>
+</html>
